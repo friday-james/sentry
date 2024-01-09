@@ -10,15 +10,25 @@ export function bootOperator(cli: Vorpal) {
 
     cli
         .command('boot-operator', 'Starts a runtime of the operator.')
-        .action(async function (this: Vorpal.CommandInstance) {
-            const walletKeyPrompt: Vorpal.PromptObject = {
-                type: 'password',
-                name: 'walletKey',
-                message: 'Enter the private key of the operator:',
-                mask: '*'
-            };
+        .option('-k, --key', 'Use wallet key from cli')
+        .action(async function (this: Vorpal.CommandInstance, args) {
+            let walletKey;
 
-            const { walletKey } = await this.prompt(walletKeyPrompt);
+            walletKey = args.options.key; // Get walletKey from environment variable
+            console.log("walletKey", walletKey)
+
+            // If walletKey is not set in the environment, prompt the user
+            if (!walletKey) {
+                const walletKeyPrompt: Vorpal.PromptObject = {
+                    type: 'password',
+                    name: 'walletKey',
+                    message: 'Enter the private key of the operator:',
+                    mask: '*'
+                };
+
+                const response = await this.prompt(walletKeyPrompt);
+                walletKey = response.walletKey;
+            }
 
             if (!walletKey || walletKey.length < 1) {
                 throw new Error("No private key passed in. Please provide a valid private key.")
