@@ -10,12 +10,12 @@ export function bootOperator(cli: Vorpal) {
 
     cli
         .command('boot-operator', 'Starts a runtime of the operator.')
-        .option('-k, --key', 'Use wallet key from cli')
+        .option('-k --key <key>', 'Wallet key')
         .action(async function (this: Vorpal.CommandInstance, args) {
-            let walletKey;
+            const { key } = args.options;
 
-            walletKey = args.options.key; // Get walletKey from environment variable
-            console.log("walletKey", walletKey)
+            let walletKey;
+            walletKey = key; // Get walletKey from options
 
             // If walletKey is not set in the environment, prompt the user
             if (!walletKey) {
